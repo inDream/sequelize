@@ -70,7 +70,7 @@ describe(Support.getTestDialectTeaser('Model'), () => {
           if (dialect === 'sqlite') {
             expect(created).to.be.undefined;
           } else {
-            expect(created).not.to.be.ok;
+            expect(created).to.be.ok;
           }
 
           return this.User.findById(42);
