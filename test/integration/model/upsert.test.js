@@ -2,6 +2,7 @@
 
 const chai = require('chai'),
   sinon = require('sinon'),
+  semver = require('semver'),
   Sequelize = require('../../../index'),
   Promise = Sequelize.Promise,
   expect = chai.expect,
@@ -9,6 +10,8 @@ const chai = require('chai'),
   DataTypes = require(__dirname + '/../../../lib/data-types'),
   dialect = Support.getTestDialect(),
   current = Support.sequelize;
+
+const supportOnConflict = () => (dialect === 'postgres' && semver.gte(current.options.databaseVersion, '9.5.0'));
 
 describe(Support.getTestDialectTeaser('Model'), () => {
   before(function() {
@@ -69,8 +72,10 @@ describe(Support.getTestDialectTeaser('Model'), () => {
         }).then(function(created) {
           if (dialect === 'sqlite') {
             expect(created).to.be.undefined;
-          } else {
+          } else if (supportOnConflict()) {
             expect(created).to.be.ok;
+          } else {
+            expect(created).not.to.be.ok;
           }
 
           return this.User.findById(42);
@@ -95,8 +100,10 @@ describe(Support.getTestDialectTeaser('Model'), () => {
         }).then(function(created) {
           if (dialect === 'sqlite') {
             expect(created).to.be.undefined;
-          } else {
+          } else if (supportOnConflict()) {
             expect(created).to.be.ok;
+          } else {
+            expect(created).not.to.be.ok;
           }
 
           return this.User.find({ where: { foo: 'baz', bar: 19 }});
@@ -163,8 +170,10 @@ describe(Support.getTestDialectTeaser('Model'), () => {
         }).then((created) => {
           if (dialect === 'sqlite') {
             expect(created).to.be.undefined;
-          } else {
+          } else if (supportOnConflict()) {
             expect(created).to.be.ok;
+          } else {
+            expect(created).not.to.be.ok;
           }
 
           return User.find({ where: { a: 'a', b: 'b' }});
@@ -209,8 +218,10 @@ describe(Support.getTestDialectTeaser('Model'), () => {
         }).then(function(created) {
           if (dialect === 'sqlite') {
             expect(created).to.be.undefined;
-          } else {
+          } else if (supportOnConflict()) {
             expect(created).to.be.ok;
+          } else {
+            expect(created).not.to.be.ok;
           }
 
           return this.User.findById(42);
@@ -234,8 +245,10 @@ describe(Support.getTestDialectTeaser('Model'), () => {
         }).then(function(created) {
           if (dialect === 'sqlite') {
             expect(created).to.be.undefined;
-          } else {
+          } else if (supportOnConflict()) {
             expect(created).to.be.ok;
+          } else {
+            expect(created).not.to.be.ok;
           }
 
           return this.User.findById(42);
@@ -258,8 +271,10 @@ describe(Support.getTestDialectTeaser('Model'), () => {
         }).then(function(created) {
           if (dialect === 'sqlite') {
             expect(created).to.be.undefined;
-          } else {
+          } else if (supportOnConflict()) {
             expect(created).to.be.ok;
+          } else {
+            expect(created).not.to.be.ok;
           }
 
           return this.ModelWithFieldPK.findOne({ where: { userId: 42 } });
@@ -282,8 +297,10 @@ describe(Support.getTestDialectTeaser('Model'), () => {
         }).then(function(created) {
           if (dialect === 'sqlite') {
             expect(created).to.be.undefined;
-          } else {
+          } else if (supportOnConflict()) {
             expect(created).to.be.ok;
+          } else {
+            expect(created).not.to.be.ok;
           }
           return this.User.findById(42);
         }).then((user) => {
@@ -340,6 +357,8 @@ describe(Support.getTestDialectTeaser('Model'), () => {
         }).then((created) => {
           if (dialect === 'sqlite') {
             expect(created).to.be.undefined;
+          } else if (supportOnConflict()) {
+            expect(created).to.be.ok;
           } else {
             // After set node-mysql flags = '-FOUND_ROWS' in connection of mysql,
             // result from upsert should be false when upsert a row to its current value
