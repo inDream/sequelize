@@ -87,8 +87,8 @@ describe(Support.getTestDialectTeaser('Model'), () => {
       });
 
       it('works with upsert on a composite key', function() {
-            let options = {conflict: {constraint: 'users_foo_bar_key', update: ['username']}};
-            return this.User.upsert({ foo: 'baz', bar: 19, username: 'john' }, options).bind(this).then(function(created) {
+          const options = {conflict: {constraint: 'users_foo_bar_key', update: ['username']}};
+          return this.User.upsert({ foo: 'baz', bar: 19, username: 'john' }, options).bind(this).then(function(created) {
           if (dialect === 'sqlite') {
             expect(created).to.be.undefined;
           } else {
@@ -146,13 +146,13 @@ describe(Support.getTestDialectTeaser('Model'), () => {
           },
           username: DataTypes.STRING
         });
-        let options = {conflict: {constraint: 'users_pkey'}};
+        const options = {conflict: {constraint: 'users_pkey', update: ['username']}};
 
         return User.sync({ force: true }).bind(this).then(() => {
           return Promise.all([
             // Create two users
-             User.upsert({ a: 'a', b: 'b', username: 'john' }, options),
-             User.upsert({ a: 'a', b: 'a', username: 'curt' }, options),
+            User.upsert({ a: 'a', b: 'b', username: 'john' }, options),
+            User.upsert({ a: 'a', b: 'a', username: 'curt' }, options),
           ]);
         }).spread(function(created1, created2) {
           if (dialect === 'sqlite') {
@@ -462,17 +462,20 @@ describe(Support.getTestDialectTeaser('Model'), () => {
         });
 
         return User.sync({ force: true }).then(() => {
-          return User.upsert({ name: 'user1', address: 'address', city: 'City' })
+          const options = {conflict: {target: ['name', 'address'], update: ['city']}};
+          return User.upsert({ name: 'user1', address: 'address', city: 'City' }, options)
             .then(created => {
               if (dialect === 'sqlite') {
                 expect(created).to.be.undefined;
               } else {
                 expect(created).to.be.ok;
               }
-              return User.upsert({ name: 'user1', address: 'address', city: 'New City' });
+              return User.upsert({ name: 'user1', address: 'address', city: 'New City' }, options);
             }).then(created => {
               if (dialect === 'sqlite') {
                 expect(created).to.be.undefined;
+              } else if (supportOnConflict()) {
+                expect(created).to.be.ok;
               } else {
                 expect(created).not.to.be.ok;
               }
