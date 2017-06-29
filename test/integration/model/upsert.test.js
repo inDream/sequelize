@@ -87,8 +87,8 @@ describe(Support.getTestDialectTeaser('Model'), () => {
       });
 
       it('works with upsert on a composite key', function() {
-          const options = {conflict: {constraint: 'users_foo_bar_key', update: ['username']}};
-          return this.User.upsert({ foo: 'baz', bar: 19, username: 'john' }, options).bind(this).then(function(created) {
+        const options = {conflict: {constraint: 'users_foo_bar_key', update: ['username']}};
+        return this.User.upsert({ foo: 'baz', bar: 19, username: 'john' }, options).bind(this).then(function(created) {
           if (dialect === 'sqlite') {
             expect(created).to.be.undefined;
           } else {
