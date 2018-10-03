@@ -14,7 +14,7 @@ if (current.dialect.supports.transactions) {
 
   describe(Support.getTestDialectTeaser('Transaction'), () => {
     beforeEach(function() {
-      this.sinon = sinon.sandbox.create();
+      this.sinon = sinon.createSandbox();
     });
 
     afterEach(function() {
@@ -185,6 +185,16 @@ if (current.dialect.supports.transactions) {
           });
         })
       ).to.eventually.be.rejected;
+    });
+
+    it('should not rollback if connection was not acquired', function() {
+      this.sinon.stub(this.sequelize.connectionManager, '_connect')
+        .returns(new Support.Sequelize.Promise(() => {}));
+
+      const transaction = new Transaction(this.sequelize);
+
+      return expect(transaction.rollback())
+        .to.eventually.be.rejectedWith('Transaction cannot be rolled back because it never started');
     });
 
     it('does not allow queries immediatly after rollback call', function() {

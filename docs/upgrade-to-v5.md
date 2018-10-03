@@ -59,21 +59,66 @@ Now supports only one standard format `[{ value: 1, inclusive: true }, { value: 
 
 Added support for `CIDR`, `INET` and `MACADDR` for Postgres
 
+### Query Interface
+
+- `changeColumn` no longer generates constraint with `_idx` suffix. Now Sequelize does not specify any name for constraints thus defaulting to database engine naming. This aligns behavior of `sync`, `createTable` and `changeColumn`.
+
 ### Others
 
-Sequelize now use parameterized queries for all INSERT / UPDATE operations (except UPSERT). They provide better protection against SQL Injection attack.
+- Sequelize now use parameterized queries for all INSERT / UPDATE operations (except UPSERT). They provide better protection against SQL Injection attack.
+- `ValidationErrorItem` now holds reference to original error in the `original` property, rather than the `__raw` property.
+- [retry-as-promised](https://github.com/mickhansen/retry-as-promised) has been updated to `3.0.0`, which use [any-promise](https://github.com/kevinbeaty/any-promise). This module repeat all `sequelize.query` operations. You can configure `any-promise` to use `bluebird` for better performance on Node 4 or 6
+- Sequelize will ignore all `undefined` keys in `where` options, In past versions `undefined` was converted to `null`. For `BULKUPDATE / BULKDELETE` query types passing undefined keys in where options will throw an error.
 
-`ValidationErrorItem` now holds reference to original error in the `original` property, rather than the `__raw` property.
 
-[retry-as-promised](https://github.com/mickhansen/retry-as-promised) has been updated to `3.0.0`, which use [any-promise](https://github.com/kevinbeaty/any-promise). This module repeat all `sequelize.query` operations. You can configure `any-promise` to use `bluebird` for better performance on Node 4 or 6
+### Packages
 
-
-### Removed
-
-- package: terraformer-wkt-parser [#9545](https://github.com/sequelize/sequelize/pull/9545)
-
+- removed: terraformer-wkt-parser [#9545](https://github.com/sequelize/sequelize/pull/9545)
+- mysql2: use `1.5.2` or above to support prepared statements
 
 ## Changelog
+
+### 5.0.0-beta.12
+
+- fix(changeColumn): normalize attribute [#9897](https://github.com/sequelize/sequelize/pull/9897)
+- feat(describeTable): support string length for mssql [#9896](https://github.com/sequelize/sequelize/pull/9896)
+- feat(describeTable): support autoIncrement for mysql [#9894](https://github.com/sequelize/sequelize/pull/9894)
+- fix(sqlite): unable to reference foreignKey on primaryKey [#9893](https://github.com/sequelize/sequelize/pull/9893)
+- fix(postgres): enum with string COMMENT breaks query [#9891](https://github.com/sequelize/sequelize/pull/9891)
+- fix(changeColumn): use engine defaults for foreign/unique key naming [#9890](https://github.com/sequelize/sequelize/pull/9890)
+- fix(transaction): fixed unhandled rejection when connection acquire timeout [#9879](https://github.com/sequelize/sequelize/pull/9879)
+- fix(sqlite): close connection properly and cleanup files [#9851](https://github.com/sequelize/sequelize/pull/9851)
+- fix(model): incorrect error message for findCreateFind [#9849](https://github.com/sequelize/sequelize/pull/9849)
+
+### 5.0.0-beta.11
+
+- fix(count): duplicate mapping of fields break scopes [#9788](https://github.com/sequelize/sequelize/pull/9788)
+- fix(model): bulkCreate should populate dataValues directly [#9797](https://github.com/sequelize/sequelize/pull/9797)
+- fix(mysql): improve unique key violation handling [#9724](https://github.com/sequelize/sequelize/pull/9724)
+- fix(separate): don't propagate group to separated queries [#9754](https://github.com/sequelize/sequelize/pull/9754)
+- fix(scope): incorrect query generated when sequelize.fn used with scopes [#9730](https://github.com/sequelize/sequelize/pull/9730)
+- fix(json): access included data with attributes [#9662](https://github.com/sequelize/sequelize/pull/9662)
+- (fix): pass offset in UNION'ed queries [#9577](https://github.com/sequelize/sequelize/pull/9577)
+- fix(destroy): attributes updated in a beforeDestroy hook are now persisted on soft delete [#9319](https://github.com/sequelize/sequelize/pull/9319)
+- fix(addScope): only throw when defaultScope is defined [#9703](https://github.com/sequelize/sequelize/pull/9703)
+
+
+### 5.0.0-beta.10
+
+- fix(belongsToMany): association.add returns array of array of through records [#9700](https://github.com/sequelize/sequelize/pull/9700)
+- feat: association hooks [#9590](https://github.com/sequelize/sequelize/pull/9590)
+- fix(bulkCreate): dont map dataValue to fields for individualHooks:true[#9672](https://github.com/sequelize/sequelize/pull/9672)
+- feat(postgres): drop enum support [#9641](https://github.com/sequelize/sequelize/pull/9641)
+- feat(validation): improve validation for type[#9660](https://github.com/sequelize/sequelize/pull/9660)
+- feat: allow querying sqlite_master table [#9645](https://github.com/sequelize/sequelize/pull/9645)
+- fix(hasOne.sourceKey): setup sourceKeyAttribute for joins [#9658](https://github.com/sequelize/sequelize/pull/9658)
+- fix: throw when type of array values is not defined [#9649](https://github.com/sequelize/sequelize/pull/9649)
+- fix(query-generator): ignore undefined keys in query [#9548](https://github.com/sequelize/sequelize/pull/9548)
+- fix(model): unable to override rejectOnEmpty [#9632](https://github.com/sequelize/sequelize/pull/9632)
+- fix(reload): instance.changed() remains unaffected [#9615](https://github.com/sequelize/sequelize/pull/9615)
+- feat(model): column level comments [#9573](https://github.com/sequelize/sequelize/pull/9573)
+- docs: cleanup / correct jsdoc references [#9702](https://github.com/sequelize/sequelize/pull/9702)
+
 
 ### 5.0.0-beta.9
 

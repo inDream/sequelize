@@ -114,6 +114,33 @@ describe(Support.getTestDialectTeaser('Model'), () => {
       });
     });
 
+    it('should not map instance dataValues to fields with individualHooks: true', function() {
+      const User = this.sequelize.define('user', {
+        name: Sequelize.STRING,
+        type: {
+          type: Sequelize.STRING,
+          allowNull: false,
+          field: 'user_type'
+        },
+        createdAt: {
+          type: Sequelize.DATE,
+          allowNull: false,
+          field: 'created_at'
+        },
+        updatedAt: {
+          type: Sequelize.DATE,
+          field: 'modified_at'
+        }
+      });
+
+      return User.sync({force: true}).then(() => {
+        return User.bulkCreate([
+          { name: 'James', type: 'A' },
+          { name: 'Alan', type: 'Z' }
+        ], {individualHooks: true});
+      });
+    });
+
     it('should not insert NULL for unused fields', function() {
       const Beer = this.sequelize.define('Beer', {
         style: Sequelize.STRING,
@@ -395,7 +422,8 @@ describe(Support.getTestDialectTeaser('Model'), () => {
       });
     });
 
-    if (current.dialect.supports.ignoreDuplicates) {
+    if (current.dialect.supports.inserts.ignoreDuplicates ||
+        current.dialect.supports.inserts.onConflictDoNothing) {
       it('should support the ignoreDuplicates option', function() {
         const self = this;
         const data = [
@@ -436,7 +464,7 @@ describe(Support.getTestDialectTeaser('Model'), () => {
       });
     }
 
-    if (current.dialect.supports.updateOnDuplicate) {
+    if (current.dialect.supports.inserts.updateOnDuplicate) {
       describe('updateOnDuplicate', () => {
         it('should support the updateOnDuplicate option', function() {
           const data = [
@@ -599,7 +627,7 @@ describe(Support.getTestDialectTeaser('Model'), () => {
           return Maya.bulkCreate([M2]);
         }).spread(m => {
 
-        // only attributes are returned, no fields are mixed
+          // only attributes are returned, no fields are mixed
           expect(m.createdAt).to.be.ok;
           expect(m.created_at).to.not.exist;
           expect(m.secret_given).to.not.exist;

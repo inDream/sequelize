@@ -29,9 +29,8 @@ We're glad to get pull request if any functionality is missing or something is b
     - don't use a done callback in your test, just return the promise chain.
   - Small bugfixes and direct backports to the 1.7 branch are accepted without tests.
 * If you are adding to / changing the public API, remember to add API docs, in the form of [JSDoc style](http://usejsdoc.org/about-getting-started.html) comments. See [section 4a](#4a-check-the-documentation  ) for the specifics.
-* Add an entry to the [changelog](https://github.com/sequelize/sequelize/blob/master/changelog.md), with a link to the issue you are solving
 
-Still interested? Coolio! Here is how to get started:
+Interested? Coolio! Here is how to get started:
 
 ### 1. Prepare your environment
 Here comes a little surprise: You need [Node.JS](http://nodejs.org).
@@ -92,7 +91,7 @@ Now launch the docker mysql and postgres servers with this command (you can add 
 $ docker-compose up postgres-95 mysql-57
 ```
 
-Sequelize uses the sushantdhiman/postgres:9.5 Docker image for PostgreSQL, which installs the extensions required by tests: https://github.com/sushantdhiman/sequelize-postgres/blob/master/00-extensions.sql
+Sequelize uses [special](https://github.com/sushantdhiman/sequelize-postgres) Docker image for PostgreSQL, which install all the extensions required by tests.
 
 ### 4. Running tests
 
@@ -122,9 +121,7 @@ Example:
 
     feat(pencil): add 'graphiteWidth' option
 
-Commit messages are used to automatically generate a changelog, so make sure to follow the convention.
-If you are unsure, you can let [commitizen](https://github.com/commitizen/cz-cli) ask you questions and commit for you (just run `node_modules/.bin/git-cz`).
-When you commit, your commit message will be validated automatically with [validate-commit-msg](https://github.com/kentcdodds/validate-commit-msg).
+Commit messages are used to automatically generate a changelog. They will be validated automatically using [commitlint](https://github.com/marionebl/commitlint)
 
 Then push and send your pull request. Happy hacking and thank you for contributing.
 
@@ -133,8 +130,6 @@ Then push and send your pull request. Happy hacking and thank you for contributi
 Have a look at our [.eslintrc.json](https://github.com/sequelize/sequelize/blob/master/.eslintrc.json) file for the specifics. As part of the test process, all files will be linted, and your PR will **not** be accepted if it does not pass linting.
 
 # Publishing a release (For Maintainers)
-
-**Note:** _You really don't need this as Sequelize use semantic-release, Travis will automatically release new version_
 
 1. Ensure that latest build on master is green
 2. Ensure your local code is up to date (`git pull origin master`)

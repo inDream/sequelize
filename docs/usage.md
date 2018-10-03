@@ -97,7 +97,7 @@ const sequelize = new Sequelize('database', 'username', 'password', {
   //   sequelize.define(name, attributes, { timestamps: false })
   // so defining the timestamps for each model will be not necessary
   define: {
-    underscored: false
+    underscored: false,
     freezeTableName: false,
     charset: 'utf8',
     dialectOptions: {
@@ -265,7 +265,7 @@ sequelize
     logging: console.log,
 
     // If plain is true, then sequelize will only return the first
-    // record of the result set. In case of false it will all records.
+    // record of the result set. In case of false it will return all records.
     plain: false,
 
     // Set this to true if you don't have a model definition for your query.
